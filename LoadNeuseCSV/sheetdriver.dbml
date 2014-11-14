@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="nssnc" Class="sheetdriverDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=JOSEPH\SQLEXPRESS;Initial Catalog=nssnc;Integrated Security=True" SettingsObjectName="LoadNeuseCSV.Properties.Settings" SettingsPropertyName="nssncConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.SheetDRV" Member="SheetDRVs">
+    <Type Name="SheetDRV">
+      <Column Name="id" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="parent" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="[level]" Member="level" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="type" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="code" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="description" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="sort" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

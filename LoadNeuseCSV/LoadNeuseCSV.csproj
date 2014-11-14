@@ -46,6 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSVSheetTable.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CSVSheetTable.dbml</DependentUpon>
+    </Compile>
     <Compile Include="LogFile.cs" />
     <Compile Include="Product.designer.cs">
       <AutoGen>True</AutoGen>
@@ -69,9 +74,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>searchCriteria.dbml</DependentUpon>
     </Compile>
+    <Compile Include="sheetdriver.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>sheetdriver.dbml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="CSVSheetTable.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>CSVSheetTable.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Product.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
@@ -92,6 +107,11 @@
       <LastGenOutput>searchCriteria.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
+    <None Include="sheetdriver.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>sheetdriver.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
@@ -109,6 +129,16 @@
   <ItemGroup>
     <None Include="searchCriteria.dbml.layout">
       <DependentUpon>searchCriteria.dbml</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSVSheetTable.dbml.layout">
+      <DependentUpon>CSVSheetTable.dbml</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sheetdriver.dbml.layout">
+      <DependentUpon>sheetdriver.dbml</DependentUpon>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -11,4 +11,3 @@ C:\Users\jlegacy\Documents\Visual Studio 2013\Projects\LoadNeuseProductsCSV\Load
 C:\Users\jlegacy\Documents\Visual Studio 2013\Projects\LoadNeuseProductsCSV\LoadNeuseCSV\bin\Debug\LoadNeuseCSV.exe
 C:\Users\jlegacy\Documents\Visual Studio 2013\Projects\LoadNeuseProductsCSV\LoadNeuseCSV\bin\Debug\LoadNeuseCSV.pdb
 C:\Users\jlegacy\Documents\Visual Studio 2013\Projects\LoadNeuseProductsCSV\LoadNeuseCSV\bin\Debug\LINQtoCSV.dll
-C:\Users\jlegacy\Documents\Visual Studio 2013\Projects\LoadNeuseProductsCSV\LoadNeuseCSV\obj\Debug\LoadNeuseCSV.csprojResolveAssemblyReference.cache

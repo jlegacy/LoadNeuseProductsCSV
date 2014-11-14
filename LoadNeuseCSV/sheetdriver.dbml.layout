@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="sheetdriver">
+  <DataContextMoniker Name="/sheetdriverDataContext" />
+  <nestedChildShapes>
+    <classShape Id="b401f516-0618-42cf-8a02-111c04b9c79a" absoluteBounds="4.875, 1.375, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/sheetdriverDataContext/SheetDRV" />
+      <nestedChildShapes>
+        <elementListCompartment Id="cfe2c2a7-682a-4aed-bf3b-b82521aac151" absoluteBounds="4.89, 1.835, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

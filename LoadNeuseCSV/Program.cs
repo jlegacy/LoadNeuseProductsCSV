@@ -116,55 +116,89 @@ namespace LoadNeuseCSV
         public string Text { get; set; }
     }
 
+    internal class SectionCsv
+    {
+        [CsvColumn(Name = "id", FieldIndex = 1)]
+        public int id { get; set; }
+
+        [CsvColumn(Name = "parent", FieldIndex = 2)]
+        public int parent { get; set; }
+
+        [CsvColumn(Name = "level", FieldIndex = 3)]
+        public int level { get; set; }
+
+        [CsvColumn(Name = "type", FieldIndex = 4)]
+        public string type { get; set; }
+
+        [CsvColumn(Name = "code", FieldIndex = 5)]
+        public string code { get; set; }
+
+        [CsvColumn(Name = "description", FieldIndex = 6)]
+        public string description { get; set; }
+
+        [CsvColumn(Name = "sort", FieldIndex = 7)]
+        public string sort { get; set; }
+    }
+
     internal class Program
     {
         public static int templateCategory { get; set; }
         public static int neuseSection { get; set; }
 
- 
         private static void Main(string[] args)
         {
-            templateCategory = Convert.ToInt32(args[0]);
-            neuseSection = Convert.ToInt32(args[1]);
+            var inputFileDescription = new CsvFileDescription
+            {
+                SeparatorChar = ',',
+                FirstLineHasColumnNames = true,
+                IgnoreUnknownColumns = true
+            };
 
-             LogFile logger = new LogFile();
+            var cd = new CsvContext();
 
-             logger.MyLogFile("cat:", templateCategory.ToString());
-             logger.MyLogFile("sect:", neuseSection.ToString());
+            IEnumerable<SectionCsv> sections =
+                cd.Read<SectionCsv>("C:\\Users\\jlegacy\\Desktop\\BRScategoryDrive.csv", inputFileDescription);
 
-            var fd = new CsvFileDescription();
-            fd.SeparatorChar = ',';
-            fd.FirstLineHasColumnNames = true;
-            fd.TextEncoding = Encoding.Default;
+            // query data from sections
 
-            var cc = new CsvContext();
+            var dd = new sheetdriverDataContext();
+            IQueryable<SheetDRV> sectionsByName =
+                from a in dd.GetTable<SheetDRV>()
+                where a.level == 3
+                select a;
 
-            IEnumerable<ProductCSV> products =
-                cc.Read<ProductCSV>("C:\\Users\\jlegacy\\Desktop\\NeuseCSV.csv", fd);
+         
+            foreach (SheetDRV ditem in sectionsByName)
+            {
+                templateCategory = Convert.ToInt32(Asc(ditem.code).ToString());
+                neuseSection = Convert.ToInt32(ditem.id.ToString());
+
+                var cs = new CSVSheetTableDataContext();
+                IQueryable<Sheet1_> q =
+                    from a in cs.GetTable<Sheet1_>()
+                    where a.categoryID.Equals(neuseSection)
+                    select a;
 
 // Data is now available via variable products.
 
-            IEnumerable<ProductCSV> productsByName =
-                from p in products
-                where (p.CategoryID.Equals(neuseSection))
-                select p;
 // or ...
-            foreach (ProductCSV item in productsByName)
-            {
-                IEnumerable<ProductCSV> SKURecords =
-                    from z in products
-                    where
-                        (z.ModelSku.CompareTo(item.ModelSku) == 0) && (z.CategoryID == 0) &&
-                        (z.Id.CompareTo("Description1") == 0)
-                    select z;
-
-                foreach (ProductCSV z in SKURecords)
+                foreach (Sheet1_ item in q)
                 {
-                    //Data maping object to our database
-                    var text = new ProductDataContext();
-                    var myProduct = new product();
+                    var cz = new CSVSheetTableDataContext();
+                    IQueryable<Sheet1_> SKURecords =
+                        from b in cz.GetTable<Sheet1_>()
+                        where
+                            (b.modelSKU == item.modelSKU) && (b.categoryID == null) &&
+                            (b.id.CompareTo("Description1") == 0)
+                        select b;
 
-             /*       var dc = new ProductDataContext();
+                    foreach (Sheet1_ z in SKURecords)
+                    {
+                        //Data maping object to our database
+                        var text = new ProductDataContext();
+                        var myProduct = new product();
+
+                        /*       var dc = new ProductDataContext();
                     IQueryable<product> q =
                         from a in dc.GetTable<product>()
                         where a.pID.Equals(z.Gtin1)
@@ -180,45 +214,48 @@ namespace LoadNeuseCSV
                     }
                     else
                     { */
-                    if (z.Id.CompareTo("Description1") == 0)
-                    { 
-                        buildData(myProduct, z);
-                        text.products.InsertOnSubmit(myProduct);
-                        if (myProduct.pID != null)
+                        if (z.id.CompareTo("Description1") == 0)
                         {
-                            try
+                            buildData(myProduct, z);
+                            text.products.InsertOnSubmit(myProduct);
+                            if (myProduct.pID != null)
                             {
-                                text.SubmitChanges();
-                                saveImage(z);
+                                try
+                                {
+                                    text.SubmitChanges();
+                                    saveImage(z);
+                                    Console.WriteLine(item.categoryID);
+                                }
+                                catch (Exception e)
+                                {
+                                    //    logger.MyLogFile("error:", e.ToString());
+                                }
                             }
-                            catch (Exception)
-                            {
-                            }
+                            //}
                         }
-                        //}
                     }
-                }
 
-                // executes the appropriate commands to implement the changes to the database
+                    // executes the appropriate commands to implement the changes to the database
+                }
             }
         }
 
-        private static void buildData(product myProduct, ProductCSV item)
+        private static void buildData(product myProduct, Sheet1_ item)
         {
-            myProduct.pID = item.Gtin1;
-            myProduct.pName = HttpUtility.UrlDecode(item.Text);
-            myProduct.pName2 = HttpUtility.UrlDecode(item.ModelName);
+            myProduct.pID = (item.gtin1).ToString();
+            myProduct.pName = HttpUtility.UrlDecode(item.text);
+            myProduct.pName2 = HttpUtility.UrlDecode(item.modelName);
             myProduct.pSection = templateCategory;
 
-            myProduct.pDescription = HtmlEncode(item.ModelDescription);
+            myProduct.pDescription = HtmlEncode(item.modelDescription);
 
-            myProduct.pLongdescription = HttpUtility.UrlDecode(item.ModelDescription);
-            myProduct.pSKU = item.ModelSku;
+            myProduct.pLongdescription = HttpUtility.UrlDecode(item.modelDescription);
+            myProduct.pSKU = item.modelSKU.ToString();
 
-            myProduct.pPrice = item.Msrp;
+            myProduct.pPrice = item.msrp;
             myProduct.pListPrice = 0;
 
-            myProduct.pWeight = item.Weight;
+            myProduct.pWeight = Convert.ToDouble(item.weight);
             myProduct.pTax = 0;
             myProduct.pWholesalePrice = 0;
             myProduct.pShipping = 0;
@@ -233,27 +270,30 @@ namespace LoadNeuseCSV
             myProduct.pDisplay = 1;
             myProduct.pSell = 1;
 
-            myProduct.pManufacturer = GetManufacturer(item.BrandName);
+            myProduct.pManufacturer = GetManufacturer(item.brandName);
             myProduct.pDropship = 0;
 
-            myProduct.pSearchParams = HttpUtility.UrlDecode(item.Text);
+            myProduct.pSearchParams = HttpUtility.UrlDecode(item.text);
         }
 
         public static string HtmlEncode(string text)
         {
-            char[] chars = HttpUtility.HtmlEncode(text).ToCharArray();
-            var result = new StringBuilder(text.Length + (int) (text.Length*0.1));
-
-            foreach (char c in chars)
+            if (text != null)
             {
-                int value = Convert.ToInt32(c);
-                if (value > 127)
-                    result.AppendFormat("&#{0};", value);
-                else
-                    result.Append(c);
-            }
+                char[] chars = HttpUtility.HtmlEncode(text).ToCharArray();
+                var result = new StringBuilder(text.Length + (int) (text.Length*0.1));
 
-            return result.ToString();
+                foreach (char c in chars)
+                {
+                    int value = Convert.ToInt32(c);
+                    if (value > 127)
+                        result.AppendFormat("&#{0};", value);
+                    else
+                        result.Append(c);
+                }
+                return result.ToString();
+            }
+            return "";
         }
 
         private static int GetManufacturer(string x)
@@ -261,7 +301,7 @@ namespace LoadNeuseCSV
             int manufacturer = 0;
 
             var text = new searchCriteriaDataContext();
-   
+
             IQueryable<searchcriteria> q =
                 from a in text.GetTable<searchcriteria>()
                 where (a.scWorkingName.ToLower().Trim().CompareTo(x.ToLower().Trim()) == 0)
@@ -270,17 +310,15 @@ namespace LoadNeuseCSV
             {
                 foreach (searchcriteria z in q)
                 {
-                   manufacturer = z.scID;
+                    manufacturer = z.scID;
                 }
             }
 
             return manufacturer;
         }
 
-
-        private static void saveImage(ProductCSV item)
+        private static void saveImage(Sheet1_ item)
         {
-          
             var text2 = new productImagesDataContext();
             var dc = new productImagesDataContext();
 
@@ -288,15 +326,15 @@ namespace LoadNeuseCSV
 
             IQueryable<productimage> q =
                 from a in dc.GetTable<productimage>()
-                where a.imageProduct.Equals(item.Gtin1) && (a.imageType == 0)
+                where a.imageProduct.Equals(item.gtin1) && (a.imageType == 0)
                 select a;
             if (q.Any())
             {
-                foreach (productimage x in q)
-                {
-                    buildImage(x, item, 0);
-                    dc.SubmitChanges();
-                }
+                //    foreach (productimage x in q)
+                //    {
+                //        buildImage(x, item, 0);
+                //        dc.SubmitChanges();
+                //     }
             }
             else
             {
@@ -311,7 +349,7 @@ namespace LoadNeuseCSV
 
             IQueryable<productimage> z =
                 from a in dc2.GetTable<productimage>()
-                where a.imageProduct.Equals(item.Gtin1) && (a.imageType == 1)
+                where a.imageProduct.Equals(item.gtin1) && (a.imageType == 1)
                 select a;
             if (z.Any())
             {
@@ -329,12 +367,11 @@ namespace LoadNeuseCSV
             }
         }
 
-        private static void buildImage(productimage myProductImage, ProductCSV item, short imgTyp)
+        private static void buildImage(productimage myProductImage, Sheet1_ item, short imgTyp)
         {
-            
             myProductImage.imageNumber = 0;
             myProductImage.imageType = imgTyp;
-            var size = "s";
+            string size = "s";
             switch (imgTyp)
             {
                 case 0:
@@ -348,8 +385,31 @@ namespace LoadNeuseCSV
                     break;
             }
 
-            myProductImage.imageSrc = "prodImages" + getPath(item.Image) + size +item.Image;
-            myProductImage.imageProduct = item.Gtin1;
+            myProductImage.imageSrc = "prodImages" + getPath(item.image) + size + item.image;
+            myProductImage.imageProduct = item.gtin1.ToString();
+        }
+
+        private static int Asc(String ch)
+        {
+            //Return the character value of the given character
+            ch = ch.ToUpper();
+            byte[] bytes = Encoding.ASCII.GetBytes(ch);
+            string numString = "";
+            int j;
+            foreach (byte b in bytes)
+            {
+                if (b >= 48 && b <= 57)
+                {
+                    numString = numString + (Convert.ToChar(b));
+                }
+                else
+                {
+                    j = b - 64;
+                    numString = numString + (Convert.ToString(j));
+                }
+            }
+
+            return Convert.ToInt32(numString);
         }
 
         private static string getPath(String text)
@@ -358,7 +418,7 @@ namespace LoadNeuseCSV
             string result;
 
             // Instantiate the regular expression object.
-            Regex r = new Regex(pat, RegexOptions.IgnoreCase);
+            var r = new Regex(pat, RegexOptions.IgnoreCase);
 
             // Match the regular expression pattern against a text string.
             Match m = r.Match(text);
